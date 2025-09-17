@@ -8,12 +8,13 @@
     <h2>All Products</h2>
 
     <p>
-        <a asp-action="Create" class="btn">+ Add Product</a>
+        <a asp-action="Create" class="btn btn-primary">+ Add Product</a>
     </p>
 
     <table class="table">
         <thead>
             <tr>
+                <th>Image</th>
                 <th>Name</th>
                 <th>Description</th>
                 <th>Price</th>
@@ -25,13 +26,24 @@
             @foreach (var item in Model)
             {
                 <tr>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.ImagePath))
+                        {
+                            <img src="@item.ImagePath" width="100" />
+                        }
+                        else
+                        {
+                            <span>No image</span>
+                        }
+                    </td>
                     <td>@item.Name</td>
                     <td>@item.Description</td>
                     <td>@item.Price.ToString("C")</td>
                     <td>@item.Category?.Name</td>
                     <td>
-                        <a asp-action="Update" asp-route-id="@item.Id" class="btn">Edit</a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
+                        <a asp-action="Update" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
+                        <a asp-controller="Cart" asp-action="AddToCart" asp-route-id="@item.Id" class="btn btn-success btn-sm">Add to Cart</a>
                     </td>
                 </tr>
             }

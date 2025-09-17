@@ -1,16 +1,22 @@
 ﻿using ASP_NET_hw2.Data;
 using ASP_NET_hw2.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.IO;
 
 namespace ASP_NET_hw2.Repositories
 {
     public class ProductRepository
     {
         private readonly ApplicationDbContext _context;
+        private readonly string _imagesPath;
 
         public ProductRepository(ApplicationDbContext context)
         {
             _context = context;
+            // Assuming images are stored in wwwroot/images
+            _imagesPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
         }
 
         public IQueryable<Product> Products => _context.Products.Include(p => p.Category);
@@ -41,6 +47,16 @@ namespace ASP_NET_hw2.Repositories
             var product = _context.Products.Find(id);
             if (product != null)
             {
+                // Delete image file if exists
+                if (!string.IsNullOrEmpty(product.ImagePath))
+                {
+                    var filePath = Path.Combine(_imagesPath, Path.GetFileName(product.ImagePath));
+                    if (File.Exists(filePath))
+                    {
+                        File.Delete(filePath);
+                    }
+                }
+
                 _context.Products.Remove(product);
                 _context.SaveChanges();
             }
